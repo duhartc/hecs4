@@ -1,14 +1,15 @@
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.*;
+
 
 public aspect ParametricHasNext {
-	HashMap<Iterator, VerificationMonitor> iteratorMap = new HashMap<Iterator,VerificationMonitor>();
+	HashMap<Iterator, VerificationMonitor> iteratorMap = new HashMap<Iterator,
+			VerificationMonitor>();
 
 	public Verdict dispatchEvent(String concreteEventName, Iterator it) {
 
 		Verdict v = null;
 		if (!this.iteratorMap.containsKey(it)) {
-			VerificationMonitor monitor = new VerificationMonitor(it.hashCode());
+			VerificationMonitor monitor = new VerificationMonitor (it.hashCode());
 			iteratorMap.put(it, monitor);
 		}
 		switch (concreteEventName) {
@@ -21,7 +22,9 @@ public aspect ParametricHasNext {
 		default: break;
 		}
 		return v;
+
 	}
+
 	pointcut hasNext(Iterator it): call(boolean java.util.Iterator.hasNext())&&target(it);
 	pointcut next(Iterator it): call(Object java.util.Iterator.next()) && target(it);
 

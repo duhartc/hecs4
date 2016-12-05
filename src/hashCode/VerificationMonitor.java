@@ -1,3 +1,4 @@
+package hashCode;
 public class VerificationMonitor {
 	
 	private State currentState;
@@ -26,19 +27,19 @@ public class VerificationMonitor {
 		switch (this.currentState) {
 		case DoHasNext:
 			switch (e) {
-			case hasNext:
+			case add:
 				this.currentState = State.DoNext;
 				break;
-			case next:
+			case remove:
 				this.currentState = State.Error;
 				break;
 			}
 			break;
 		case DoNext:
 			switch (e) {
-			case hasNext:
+			case add:
 				break;
-			case next:
+			case remove:
 				this.currentState = State.DoHasNext;
 				break;
 			}

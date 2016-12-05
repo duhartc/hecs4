@@ -1,3 +1,4 @@
+package hashCode;
 public enum State {
 	DoHasNext("DoHasNext"), DoNext("DoNext"), Error("Error");
 

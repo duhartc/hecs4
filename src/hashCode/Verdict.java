@@ -1,3 +1,4 @@
+package hashCode;
 public enum Verdict {
 	TRUE("true"),
 	CURRENTLY_TRUE("currently true"),

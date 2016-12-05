@@ -1,6 +1,7 @@
+package hashCode;
 
 public enum Event {
-	hasNext ("hasNext"), next("next");
+	add ("add"), remove("remove"), add_collec("add_collec"), remove_collec("remove_collec");
 
 	private String name;
 	Event (String name) {
