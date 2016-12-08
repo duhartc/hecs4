@@ -1,7 +1,7 @@
 package hashCode;
 
 public enum Event {
-	add ("add"), remove("remove"), add_collec("add_collec"), remove_collec("remove_collec");
+	addInHash("addInHash"),update("update"), removeFromHash("removeFromHash");
 
 	private String name;
 	Event (String name) {

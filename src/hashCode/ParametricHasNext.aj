@@ -2,50 +2,25 @@ package hashCode;
 import java.util.*;
 
 
-public aspect ParametricHasNext {
+public aspect ParametricHasNext {	
+	HashMap<Collection<String>, HashSet<HashSet<Collection<String>>>> collectionMap = new HashMap<Collection<String>, HashSet<HashSet<Collection<String>>>>();
+	HashMap<Collection<String>, VerificationMonitor> collectionMonitors = new HashMap<Collection<String>, VerificationMonitor>();
 	
-	/*
-	HashMap<Iterator, VerificationMonitor> iteratorMap = new HashMap<Iterator,
-			VerificationMonitor>();
-
-	public Verdict dispatchEvent(String concreteEventName, Iterator it) {
-
+	
+	public Verdict dispatchEvent(String concreteEventName, Collection<String> c) {
 		Verdict v = null;
-		if (!this.iteratorMap.containsKey(it)) {
-			VerificationMonitor monitor = new VerificationMonitor (it.hashCode());
-			iteratorMap.put(it, monitor);
+		
+		if (!this.collectionMap.containsKey(c)) {
+			VerificationMonitor monitor = new VerificationMonitor(c.hashCode());
+			collectionMonitors.put(c, monitor);
 		}
+		
 		switch (concreteEventName) {
-		case "hasNext":
-			v = iteratorMap.get(it).receiveEvent(Event.hasNext);
-			break;
-		case "next":
-			v = iteratorMap.get(it).receiveEvent(Event.next);
+		case "update":
+			v = collectionMonitors.get(c).receiveEvent(Event.update);
 			break;
 		default: break;
 		}
-		return v;
-
-	}
-
-	pointcut hasNext(Iterator it): call(boolean java.util.Iterator.hasNext())&&target(it);
-	pointcut next(Iterator it): call(Object java.util.Iterator.next()) && target(it);
-
-	before(Iterator it) : hasNext(it) {dispatchEvent("hasNext", it);}
-	before(Iterator it) : next(it) {dispatchEvent("next", it);}
-	 */
-	
-	HashMap<Collection<String>, HashSet<Collection<String>>> collectionMap = new HashMap<Collection<String>, HashSet<Collection<String>>>();
-	HashMap<Collection<String>, VerificationMonitor> hMapMonitors = new HashMap<Collection<String>, VerificationMonitor>();
-	
-	
-	public Verdict dispatchEvent(String concreteName, Collection<String> c) {
-		Verdict v = null;
-		if (!this.collectionMap.containsKey(c)) {
-			VerificationMonitor monitor = new VerificationMonitor(c.hashCode());
-			
-		}
-		
 		
 		return v;
 	}
@@ -55,36 +30,29 @@ public aspect ParametricHasNext {
 		Collection<String> collec = (Collection<String>) c;
 		Verdict v = null;
 		
-		if (!hMapMonitors.containsKey(c)) {
-			hMapMonitors.put(collec, new VerificationMonitor(collec.hashCode()));
-			collectionMap.put(collec, hSet);
-		}
 		switch (concreteEventName) {
-		case "add":
-			v = hMapMonitors.get(collec).receiveEvent(Event.add_collec);
-			//v = iteratorMap.get(it).receiveEvent(Event.hasNext);
+		case "addInHash":
+			v = collectionMonitors.get(collec).receiveEvent(Event.addInHash);
+			collectionMap.get(collec).add(hSet);
 			break;
-		case "remove":
-			//v = iteratorMap.get(it).receiveEvent(Event.next);
+		case "removeFromHash":
+			v = collectionMonitors.get(collec).receiveEvent(Event.removeFromHash);
+			collectionMap.get(collec).remove(hSet);
 			break;
 		default: break;
 		}
+		
 		return v;
 		
 	}
 	
-	pointcut add_collec(HashSet hSet, Collection<String> c): call (void java.util.HashSet.add()) && target(hSet) && args(c);
-	pointcut remove_collec(HashSet hSet, Collection<String> c): call (void java.util.HashSet.remove()) && target(hSet) && args(c);
-	 // arg(hset) -> collection
-//	pointcut add(Collection c): call (void java.util.Collection.add()) && target(c);
-//	pointcut remove(Collection c): call (void java.util.Collection.remove()) && target(c);
-//	
+	pointcut update_hash_add(HashSet hSet, Collection<String> c): call (void java.util.HashSet.add()) && target(hSet) && args(c);
+	pointcut update_hash_remove(HashSet hSet, Collection<String> c): call (void java.util.HashSet.remove()) && target(hSet) && args(c);
+	pointcut update_collec_add(Collection c, String s): call (void java.util.Collection.add()) && target(c) && args(s);
+	pointcut update_collec_remove(Collection c, String s): call (void java.util.Collection.remove()) && target(c) && args(s);
 	
-	
-	before(HashSet hSet, Object c) : add_collec(hSet, c){dispatchEventHash("add_collec", hSet, c );}
-	//before(HashSet<Collection<String>> hSet, Collection<String> c) : remove_collec(hSet, c){dispatchEventHash("remove_collec", hSet, c);}
-	
-//	before(Collection<String> c) : add(arg(c)){dispatchEvent("add", c);}
-//	before(Collection<String> c) : remove(arg(c)){dispatchEvent("remove", c);}
-//	
+	before(HashSet hSet, Object c) : update_hash_add(hSet, c){dispatchEventHash("addInHash", hSet, c );}
+	before(HashSet hSet, Object c) : update_hash_remove(hSet, c){dispatchEventHash("removeFromHash", hSet, c );}
+	before(Collection c, String s) : update_collec_add(c, s){dispatchEvent("update", c);}
+	before(Collection c, String s) : update_collec_remove(c, s){dispatchEvent("update", c);}
 }

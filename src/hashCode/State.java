@@ -1,6 +1,6 @@
 package hashCode;
 public enum State {
-	DoHasNext("DoHasNext"), DoNext("DoNext"), Error("Error");
+	IsInHash("IsInHash"), Error("Error"), Init("Init");
 
 	private String name;
 	State (String name) {
