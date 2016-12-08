@@ -14,8 +14,10 @@ public class Main {
 	    String str = (String)itr.next();
 	}
 	
+	
+	
 	public static void correctPrg() {
-		System.out.print("Correct program: ");
+		System.out.println("Correct program: ");
 		ArrayList al = new ArrayList();
 	    al.add("C");
 	    al.add("D");

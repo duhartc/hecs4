@@ -12,17 +12,20 @@ public class VerificationMonitor {
 	private int id;
 	
 	public VerificationMonitor() {
-		this.currentState = State.Error;
+		// Replaced State.error
+		this.currentState = State.DoHasNext;
 		this.id = 0;
 	}
 	
 	public VerificationMonitor(int id) {
-		this.currentState = State.Error;
+		this.currentState = State.DoHasNext;
 		this.id = id;
 	}
 	
 	
 	public void updateState(Event e) {
+		System.out.println("Previous state: " + this.currentState);
+		System.out.println();
 		switch (this.currentState) {
 		case DoHasNext:
 			switch (e) {
@@ -47,10 +50,12 @@ public class VerificationMonitor {
 			// No need to execute any
 			break;
 		}
+		System.out.println("New state: " + this.currentState);
 	}
 	
 
 	public Verdict currentVerdict () {
+		//System.out.println(this.currentState.getName());
 		switch(this.currentState) {
 		case DoHasNext:
 			return Verdict.CURRENTLY_TRUE;
@@ -64,7 +69,7 @@ public class VerificationMonitor {
 	}
 
 	public void emitVerdict () {
-		System.out.println(currentVerdict());
+		System.out.println("Current verdict: " + currentVerdict());
 	}
 
 	public Verdict receiveEvent(Event e) {
