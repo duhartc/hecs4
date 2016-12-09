@@ -2,42 +2,45 @@ package hashCode;
 import java.util.*;
 
 
-public aspect ParametricHasNext {	
-	HashMap<Collection<String>, HashSet<HashSet<Collection<String>>>> collectionMap = new HashMap<Collection<String>, HashSet<HashSet<Collection<String>>>>();
-	HashMap<Collection<String>, VerificationMonitor> collectionMonitors = new HashMap<Collection<String>, VerificationMonitor>();
+public aspect ParametricHasNext {
+	HashMap<Collection, HashSet<HashSet<Collection>>> collectionMap = new HashMap<Collection, HashSet<HashSet<Collection>>>();
+	HashMap<Collection, VerificationMonitor> collectionMonitors = new HashMap<Collection, VerificationMonitor>();
 	
 	
-	public Verdict dispatchEvent(String concreteEventName, Collection<String> c) {
+	public Verdict dispatchEvent(String concreteEventName, Collection c) {
 		Verdict v = null;
 		
-		if (!this.collectionMap.containsKey(c)) {
-			VerificationMonitor monitor = new VerificationMonitor(c.hashCode());
-			collectionMonitors.put(c, monitor);
+		if (this.collectionMap.containsKey(c) && (!this.collectionMap.get(c).isEmpty())) {
+			switch (concreteEventName) {
+			case "update":
+				v = collectionMonitors.get(c).receiveEvent(Event.update);
+				break;
+			default: break;
+			}
 		}
-		
-		switch (concreteEventName) {
-		case "update":
-			v = collectionMonitors.get(c).receiveEvent(Event.update);
-			break;
-		default: break;
-		}
-		
 		return v;
 	}
 	
 	
-	public Verdict dispatchEventHash(String concreteEventName, HashSet<Collection<String>> hSet, Object c) {
-		Collection<String> collec = (Collection<String>) c;
+	public Verdict dispatchEventHash(String concreteEventName, Set<Collection> set, Collection collec) {
+		HashSet<Collection> hSet = (HashSet<Collection>) set;
 		Verdict v = null;
+		
+		if (!this.collectionMap.containsKey(collec)) {
+			VerificationMonitor monitor = new VerificationMonitor(collec.hashCode());
+			collectionMonitors.put(collec, monitor);
+			collectionMap.put(collec, new HashSet());
+		}
 		
 		switch (concreteEventName) {
 		case "addInHash":
-			v = collectionMonitors.get(collec).receiveEvent(Event.addInHash);
 			collectionMap.get(collec).add(hSet);
+			v = collectionMonitors.get(collec).receiveEvent(Event.addInHash);
 			break;
 		case "removeFromHash":
-			v = collectionMonitors.get(collec).receiveEvent(Event.removeFromHash);
 			collectionMap.get(collec).remove(hSet);
+			if (collectionMap.get(collec).isEmpty()) 
+				v = collectionMonitors.get(collec).receiveEvent(Event.removeFromHash);	
 			break;
 		default: break;
 		}
@@ -46,13 +49,13 @@ public aspect ParametricHasNext {
 		
 	}
 	
-	pointcut update_hash_add(HashSet hSet, Collection<String> c): call (void java.util.HashSet.add()) && target(hSet) && args(c);
-	pointcut update_hash_remove(HashSet hSet, Collection<String> c): call (void java.util.HashSet.remove()) && target(hSet) && args(c);
-	pointcut update_collec_add(Collection c, String s): call (void java.util.Collection.add()) && target(c) && args(s);
-	pointcut update_collec_remove(Collection c, String s): call (void java.util.Collection.remove()) && target(c) && args(s);
+	pointcut update_hash_add(Set set, Collection c): call (boolean java.util.Set.add(Object)) && target(set) && args(c) && !within(ParametricHasNext);
+	pointcut update_hash_remove(Set set, Collection c): call (boolean java.util.Set.remove(Object)) && target(set) && args(c) && !within(ParametricHasNext);
+	pointcut update_collec_add(Collection c, String s): call (boolean java.util.Collection.add(Object)) && target(c) && args(s);
+	pointcut update_collec_remove(Collection c, String s): call (boolean java.util.Collection.remove(Object)) && target(c) && args(s);
 	
-	before(HashSet hSet, Object c) : update_hash_add(hSet, c){dispatchEventHash("addInHash", hSet, c );}
-	before(HashSet hSet, Object c) : update_hash_remove(hSet, c){dispatchEventHash("removeFromHash", hSet, c );}
+	after(Set set, Collection c) : update_hash_add(set, c){dispatchEventHash("addInHash", set, c );}
+	before(Set set, Collection c) : update_hash_remove(set, c){dispatchEventHash("removeFromHash", set, c );}
 	before(Collection c, String s) : update_collec_add(c, s){dispatchEvent("update", c);}
 	before(Collection c, String s) : update_collec_remove(c, s){dispatchEvent("update", c);}
 }
