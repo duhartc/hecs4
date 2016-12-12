@@ -14,17 +14,18 @@ public class VerificationMonitor {
 	
 	public VerificationMonitor() {
 		// Replaced State.error
-		this.currentState = State.DoHasMoreElements;
+		this.currentState = State.Init;
 		this.id = 0;
 	}
 	
 	public VerificationMonitor(int id) {
-		this.currentState = State.DoHasMoreElements;
+		this.currentState = State.Init;
 		this.id = id;
 	}
 	
 	
 	public void updateState(Event e) {
+		/*
 		System.out.println("Previous state: " + this.currentState);
 		System.out.println();
 		switch (this.currentState) {
@@ -52,21 +53,44 @@ public class VerificationMonitor {
 			break;
 		}
 		System.out.println("New state: " + this.currentState);
+		*/
+		
+		
+		switch (this.currentState) {
+		case Init:
+			switch(e) {
+			case update:
+				this.currentState = State.Updated;
+				break;
+			case elements:
+				this.currentState = State.UpToDate;
+				break;
+			}
+
+			break;
+		case UpToDate:
+			switch(e) {
+			case update:
+				this.currentState = State.Updated;
+				break;
+			}
+			break;
+		}
+		
+		// Special end state for errors
+		if(e == Event.error) {
+			this.currentState = State.Error;
+		}
 	}
 	
 
 	public Verdict currentVerdict () {
 		//System.out.println(this.currentState.getName());
-		switch(this.currentState) {
-		case DoHasMoreElements:
+		if (this.currentState != State.Error) {
 			return Verdict.CURRENTLY_TRUE;
-		case DoNextElement:
-			return Verdict.CURRENTLY_TRUE;
-		case Error:
-			return Verdict.FALSE;
-		default:
-			return Verdict.FALSE;
 		}
+		return Verdict.FALSE;
+		
 	}
 
 	public void emitVerdict () {

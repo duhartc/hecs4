@@ -1,6 +1,7 @@
 package enums;
 public enum State {
-	DoHasMoreElements("DoHasMoreElements"), DoNextElement("DoNextElement"), Error("Error");
+	//DoHasMoreElements("DoHasMoreElements"), DoNextElement("DoNextElement"), Error("Error");
+	Init("Init"), Updated("Updated"), UpToDate("UpToDate"), Error("Error");
 
 	private String name;
 	State (String name) {
