@@ -13,34 +13,32 @@ public class VerificationMonitor {
 	private int id;
 	
 	public VerificationMonitor() {
-		this.currentState = State.Error;
+		this.currentState = State.Init;
 		this.id = 0;
 	}
 	
 	public VerificationMonitor(int id) {
-		this.currentState = State.Error;
+		this.currentState = State.Init;
 		this.id = id;
 	}
 	
 	
 	public void updateState(Event e) {
 		switch (this.currentState) {
-		case DoHasNext:
+		case Init:
 			switch (e) {
-			case add:
-				this.currentState = State.DoNext;
-				break;
-			case remove:
-				this.currentState = State.Error;
+			case addInHash:
+				this.currentState = State.IsInHash;
 				break;
 			}
 			break;
-		case DoNext:
+		case IsInHash:
 			switch (e) {
-			case add:
+			case removeFromHash:
+				this.currentState = State.Init;
 				break;
-			case remove:
-				this.currentState = State.DoHasNext;
+			case update:
+				this.currentState = State.Error;
 				break;
 			}
 			break;
@@ -53,9 +51,9 @@ public class VerificationMonitor {
 
 	public Verdict currentVerdict () {
 		switch(this.currentState) {
-		case DoHasNext:
+		case Init:
 			return Verdict.CURRENTLY_TRUE;
-		case DoNext:
+		case IsInHash:
 			return Verdict.CURRENTLY_TRUE;
 		case Error:
 			return Verdict.FALSE;
