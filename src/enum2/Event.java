@@ -1,7 +1,6 @@
-package enums;
-
+package enum2;
 public enum Event {
-	hasMoreElements("hasMoreElements"), nextElement("nextElement"), elements("elements"), update("update"), error("error");
+	hasMore("hasMore"), next("next"), create("create"), update("update");
 
 	private String name;
 	Event (String name) {

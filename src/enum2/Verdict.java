@@ -1,4 +1,4 @@
-package enums;
+package enum2;
 public enum Verdict {
 	TRUE("true"),
 	CURRENTLY_TRUE("currently true"),
