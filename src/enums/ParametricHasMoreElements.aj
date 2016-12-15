@@ -38,6 +38,17 @@ public aspect ParametricHasMoreElements {
 		case "nextElement":
 			// Send an event nextElement
 			v = enumVerifMap.get(o).receiveEvent(Event.nextElement);
+
+			// We compare the states of the enum and of the corresponding vector
+			Vector vec = enumVectors.get(o);
+			State stateVec = vectorVerifMap.get(vec).getCurrentState();
+			State stateEnum = enumVerifMap.get(o).getCurrentState();
+			
+			if (stateVec == stateEnum) {
+				v = Verdict.CURRENTLY_TRUE;
+			}
+			v = enumVerifMap.get(o).receiveEvent(Event.error);
+			
 			break;
 			
 		case "elements":
@@ -46,7 +57,7 @@ public aspect ParametricHasMoreElements {
 			v = vectorVerifMap.get(o).receiveEvent(Event.elements);
 			break;
 		case "update":
-			// Update
+			// Update -> maj the state of the corresponding Monitor
 			v = vectorVerifMap.get(o).receiveEvent(Event.update);
 			break;
 		default: break;
