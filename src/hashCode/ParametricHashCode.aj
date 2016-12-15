@@ -2,7 +2,7 @@ package hashCode;
 import java.util.*;
 
 
-public aspect ParametricHasNext {
+public aspect ParametricHashCode {
 	HashMap<Collection, HashSet<HashSet<Collection>>> collectionMap = new HashMap<Collection, HashSet<HashSet<Collection>>>();
 	HashMap<Collection, VerificationMonitor> collectionMonitors = new HashMap<Collection, VerificationMonitor>();
 	
@@ -49,8 +49,8 @@ public aspect ParametricHasNext {
 		
 	}
 	
-	pointcut update_hash_add(Set set, Collection c): call (boolean java.util.Set.add(Object)) && target(set) && args(c) && !within(ParametricHasNext);
-	pointcut update_hash_remove(Set set, Collection c): call (boolean java.util.Set.remove(Object)) && target(set) && args(c) && !within(ParametricHasNext);
+	pointcut update_hash_add(Set set, Collection c): call (boolean java.util.Set.add(Object)) && target(set) && args(c) && !within(ParametricHashCode);
+	pointcut update_hash_remove(Set set, Collection c): call (boolean java.util.Set.remove(Object)) && target(set) && args(c) && !within(ParametricHashCode);
 	pointcut update_collec_add(Collection c, String s): call (boolean java.util.Collection.add(Object)) && target(c) && args(s);
 	pointcut update_collec_remove(Collection c, String s): call (boolean java.util.Collection.remove(Object)) && target(c) && args(s);
 	
