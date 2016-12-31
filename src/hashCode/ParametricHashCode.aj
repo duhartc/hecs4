@@ -3,7 +3,7 @@ import java.util.*;
 
 
 public aspect ParametricHashCode {
-	HashMap<Collection, HashSet<HashSet<Collection>>> collectionMap = new HashMap<Collection, HashSet<HashSet<Collection>>>();
+	HashMap<Collection, LinkedList<HashSet<Collection>>> collectionMap = new HashMap<Collection, LinkedList<HashSet<Collection>>>();
 	HashMap<Collection, VerificationMonitor> collectionMonitors = new HashMap<Collection, VerificationMonitor>();
 	
 	
@@ -29,7 +29,7 @@ public aspect ParametricHashCode {
 		if (!this.collectionMap.containsKey(collec)) {
 			VerificationMonitor monitor = new VerificationMonitor(collec.hashCode());
 			collectionMonitors.put(collec, monitor);
-			collectionMap.put(collec, new HashSet());
+			collectionMap.put(collec, new LinkedList());
 		}
 		
 		switch (concreteEventName) {

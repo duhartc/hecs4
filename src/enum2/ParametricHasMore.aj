@@ -5,22 +5,14 @@ import enum2.VerificationMonitor;
 
 
 public aspect ParametricHasMore {
-	//HashMap<Vector, VerificationMonitor> vectorMap = new HashMap<Vector, VerificationMonitor>();
-	//HashMap<Enumeration, Vector> enumVectors = new HashMap<Enumeration, Vector>();
 	HashMap<Vector, Enumeration> enumVectors = new HashMap<Vector, Enumeration>();
 	HashMap<Enumeration, VerificationMonitor> enumMap = new HashMap<Enumeration, VerificationMonitor>();
 
 	public Verdict dispatchEvent(String concreteEventName, Vector vect, Enumeration en) {
 
 		Verdict v = null;
-		/*
-		if (!this.enumMap.containsKey(en)) {
-			VerificationMonitor monitor = new VerificationMonitor (en.hashCode());
-			iteratorMap.put(en, monitor);
-		}
-		*/
+	
 		if (concreteEventName.equals("createEnum") && !this.enumVectors.containsKey(vect)) {
-			//Enumeration en = vect.elements();
 			VerificationMonitor monitor = new VerificationMonitor (en.hashCode());
 			if (en != null) {
 				enumVectors.put(vect, en);
@@ -46,14 +38,6 @@ public aspect ParametricHasMore {
 
 		Verdict v = null;
 		if (!this.enumMap.containsKey(en)) {
-			//the enumeration is not created with Vector.elements()
-			/*for (Enumeration e : enumMap.keySet()) {
-				System.out.println("check:" + ((e==en) || (e.equals(en))));
-			}
-			System.out.println("Problem");
-			System.out.println(enumMap);
-			System.out.println(en);
-			*/
 			return null;
 		}
 		switch (concreteEventName) {
